@@ -1,26 +1,28 @@
-//By using  simple SQL
-// const mysql=require('mysql2') //npm install --save mysql2
+const mongodb=require('mongodb');
+const MongoClient=mongodb.MongoClient;
 
-// const pool=mysql.createPool({
-//     host:'localhost',
-//     user:'root',
-//     database:'node-complete',
-//     password:'9844'
-// });
+let _db; //underscore means this variable can only use internaly in this file
 
-// module.exports =pool.promise();
 
-////////////////////////////////////////////////////////////////////////////////////////////////
+const mongoConnect=callback=>{
+    MongoClient.connect('mongodb+srv://Mohsin:9844@cluster0.k2jhm.mongodb.net/shop?retryWrites=true&w=majority')
+    .then(client=>{
+        console.log('Connected');
+        _db=client.db()
+        callback(client);
+    })
+    .catch(err=>{
+        console.log(err);
+        throw err;
+    });
+};
 
-//By using sequelize 
-//to install sequelize we also need to first install mysql2
+const getDb=()=>{
+    if(_db){
+        return _db;
+    }
+    throw "No database found";
+}
 
-const Sequelize = require('sequelize'); //npm install --save sequelize
-
-// const Sequelize =new Sequelize('databaseName','root','Password');
-const sequelize = new Sequelize('node-complete','root','',{
-    dialect:'mysql',
-    host:'localhost',
-});
-
-module.exports=sequelize;
+exports.mongoConnect=mongoConnect;
+exports.getDb=getDb;
